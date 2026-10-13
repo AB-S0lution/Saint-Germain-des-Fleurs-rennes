@@ -2,7 +2,7 @@ import { bootPage } from '../core/boot'
 import { pageHead, ctaBand, etiquette, sampleNote } from '../core/ui'
 import { posts } from '../data/posts'
 import { $, $$, capitalise } from '../core/dom'
-import { photos, photoImg } from '../data/photos'
+import { photoBySlug, photoImg } from '../data/photos'
 
 const cats: [string, string][] = [['tous', 'Tout'], ['saison', 'Saison'], ['entretien', 'Entretien'], ['ferme', 'Ferme'], ['sécher', 'Sécher']]
 const fmt = (d: string) => capitalise(new Date(d).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }))
@@ -16,7 +16,7 @@ ${pageHead({ kicker: 'Journal', titre: 'Notes de saison.', lede: 'Ce qui fleurit
   <div class="posts" id="posts">
     ${sorted.map((p, i) => `<article class="post ${i === 0 ? 'post--lead' : ''}" data-cat="${p.categorie}" data-reveal>
       <button class="post-hit" type="button" data-post="${p.id}" aria-label="Lire : ${p.titre}"></button>
-      <figure class="post-thumb">${photoImg(photos[(i * 7 + 2) % photos.length])}</figure>
+      <figure class="post-thumb">${photoImg(photoBySlug(p.photo))}<figcaption class="ph-label">Photo d’illustration</figcaption></figure>
       <p class="post-meta">${etiquette(p.categorie)} <span>${fmt(p.date)}, ${p.lecture} min</span></p>
       <h2 class="h3">${p.titre}</h2>
       <p>${p.resume}</p>
@@ -31,7 +31,7 @@ ${ctaBand()}
   const body = $('#dlg-body')!
   $$('[data-post]').forEach((b) => b.addEventListener('click', () => {
     const p = posts.find((x) => x.id === b.dataset.post)!
-    body.innerHTML = `${photoImg(photos[(sorted.indexOf(p) * 7 + 2) % photos.length], 'photo dlg-photo')}<p class="post-meta"><span class="etiq">${p.categorie}</span> <span>${fmt(p.date)}</span></p><h2 class="h2" id="dlg-t">${p.titre}</h2>${p.corps.map((t) => `<p>${t}</p>`).join('')}`
+    body.innerHTML = `<figure class="dlg-cover">${photoImg(photoBySlug(p.photo), 'photo', true)}<figcaption class="ph-label">Photo d’illustration</figcaption></figure><p class="post-meta"><span class="etiq">${p.categorie}</span> <span>${fmt(p.date)}</span></p><h2 class="h2" id="dlg-t">${p.titre}</h2>${p.corps.map((t) => `<p>${t}</p>`).join('')}`
     dlg.showModal()
   }))
   $('.dlg-close', dlg)!.addEventListener('click', () => dlg.close())

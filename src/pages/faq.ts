@@ -1,5 +1,6 @@
 import { bootPage } from '../core/boot'
-import { pageHead, ctaBand } from '../core/ui'
+import { pageHead, ctaBand, photoBand } from '../core/ui'
+import { photoBySlug } from '../data/photos'
 import { faq } from '../data/faq'
 import { $, $$ } from '../core/dom'
 
@@ -7,6 +8,7 @@ const cats: [string, string][] = [['tous', 'Tout'], ['commander', 'Commander'], 
 
 bootPage('faq', () => `
 ${pageHead({ kicker: 'Questions fréquentes', titre: 'Commander, retirer, entretenir.', lede: 'Les réponses les plus demandées. Pour le reste, appelez la boutique.' })}
+<section class="wrap ph-top">${photoBand(['bouquet-vase', 'seaux-etal', 'sechees-blanches'].map(photoBySlug), 'ph-band--slim')}</section>
 <section class="section wrap">
   <div class="faq-tools">
     <div class="field"><label for="q">Rechercher une question</label><input id="q" type="search" autocomplete="off" placeholder="Par exemple : livraison"></div>

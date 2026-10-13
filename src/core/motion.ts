@@ -7,6 +7,8 @@ import Lenis from 'lenis'
 import { prefersReducedMotion } from './dom'
 
 gsap.registerPlugin(ScrollTrigger, SplitText)
+// Téléphones : la barre d'adresse qui se replie ne doit pas relancer tous les calculs (saut des épinglages).
+ScrollTrigger.config({ ignoreMobileResize: true })
 export { gsap, ScrollTrigger, SplitText }
 
 export let lenis: Lenis | null = null
@@ -47,10 +49,35 @@ export function initHeader(): void {
 }
 
 /** Révélations « pousse » : montée depuis la ligne de base, lente à l'entrée, douce à la sortie. */
+/** Affiche un élément [data-reveal] sans animation (filet de sécurité). */
+function showNow(el: HTMLElement): void {
+  gsap.killTweensOf(el)
+  gsap.set(el, { opacity: 1, y: 0 })
+  el.style.clipPath = 'none'
+  el.dataset.revealed = '1'
+}
+
 export function initReveals(root: ParentNode = document): void {
   if (prefersReducedMotion()) return
   const els = Array.from(root.querySelectorAll<HTMLElement>('[data-reveal]'))
   if (!els.length) return
+  // Filet de sécurité : tout élément resté masqué 1,6 s après être entré à l'écran est affiché d'office
+  // (ScrollTrigger mal recalculé après un filtre, un saut d'ancre ou un changement d'orientation).
+  if ('IntersectionObserver' in window) {
+    const timers = new Map<Element, number>()
+    const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+      const el = en.target as HTMLElement
+      if (en.isIntersecting) {
+        if (!timers.has(el)) timers.set(el, window.setTimeout(() => { if (!el.dataset.revealed) showNow(el); io.unobserve(el) }, 1600))
+      } else {
+        window.clearTimeout(timers.get(el)); timers.delete(el)
+      }
+    }), { rootMargin: '0px 0px -5% 0px' })
+    els.forEach((el) => io.observe(el))
+  }
+  // Et au bout de 4 s, tout ce qui est déjà à l'écran ou au-dessus est visible quoi qu'il arrive.
+  window.setTimeout(() => els.forEach((el) => { if (!el.dataset.revealed && el.getBoundingClientRect().top < window.innerHeight) showNow(el) }), 4000)
+  window.addEventListener('beforeprint', () => els.forEach(showNow), { once: true })
   ScrollTrigger.batch(els, {
     start: 'top 92%',
     once: true,
@@ -59,6 +86,7 @@ export function initReveals(root: ParentNode = document): void {
       // ceux déjà passés au-dessus de l'écran apparaissent sans attendre, et le décalage est plafonné.
       let n = 0
       batch.forEach((el) => {
+        ;(el as HTMLElement).dataset.revealed = '1'
         if (el.getBoundingClientRect().bottom < 0) { gsap.set(el, { opacity: 1, y: 0 }); (el as HTMLElement).style.clipPath = 'none'; return }
         const i = Math.min(n++, 5)
         const clip = (el as HTMLElement).dataset.reveal === 'clip'
@@ -76,6 +104,13 @@ export function initReveals(root: ParentNode = document): void {
       })
     },
   })
+}
+
+/** Met en pause les boucles CSS (tige qui se balance, défilé de témoignages) hors de l'écran. */
+export function initOffscreenPause(root: ParentNode = document): void {
+  if (!('IntersectionObserver' in window)) return
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => en.target.classList.toggle('is-offscreen', !en.isIntersecting)))
+  root.querySelectorAll('.hero, .marquee-sec').forEach((el) => io.observe(el))
 }
 
 /** Titres découpés en lignes, révélés par un masque (SplitText). */

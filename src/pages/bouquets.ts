@@ -1,6 +1,6 @@
 import { bootPage } from '../core/boot'
 import { pageHead, ctaBand, bouquetCard, bouquetArt, monthBar, orderMailto, sampleNote, etiquette, photoBand } from '../core/ui'
-import { photosByTheme } from '../data/photos'
+import { photosByTheme, photoImg } from '../data/photos'
 import { bouquets, type Bouquet } from '../data/bouquets'
 import { flowerById, type Couleur } from '../data/flowers'
 import { MOIS, prochainMois } from '../data/months'
@@ -54,9 +54,10 @@ ${ctaBand('Rien ne vous parle ? Composez votre propre bouquet.')}
     grid.innerHTML = typo(list.map((b) => bouquetCard(b, b.mois.includes(month), MOIS[prochainMois(b.mois, month) - 1])).join(''))
     $('#vide')!.hidden = list.length > 0
     $('#count')!.textContent = `${list.length} ${list.length > 1 ? 'créations' : 'création'}`
-    if (!reduced) gsap.fromTo(grid.children, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.04, ease: 'power3.out', clearProps: 'all' })
-    else gsap.set(grid.children, { clearProps: 'all' })
-    $$('[data-reveal]', grid).forEach((e) => { e.style.opacity = '1'; e.style.transform = 'none'; e.style.clipPath = 'none' })
+    // Les cartes filtrées s'animent ici : on retire data-reveal pour que la règle CSS
+    // `.js-motion [data-reveal]` (opacité 0) ne les masque pas de nouveau après le clearProps.
+    $$('[data-reveal]', grid).forEach((e) => e.removeAttribute('data-reveal'))
+    if (!reduced) gsap.fromTo(grid.children, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.04, ease: 'power3.out', clearProps: 'opacity,transform' })
   }
   $<HTMLInputElement>('#q')!.addEventListener('input', (e) => { st.q = (e.target as HTMLInputElement).value.trim().toLowerCase(); apply() })
   $<HTMLSelectElement>('#occ')!.addEventListener('change', (e) => { st.occ = (e.target as HTMLSelectElement).value; apply() })
@@ -78,7 +79,10 @@ ${ctaBand('Rien ne vous parle ? Composez votre propre bouquet.')}
     const b = bouquets.find((x) => x.id === hit.dataset.bouquet)!
     $('#dlg-art')!.innerHTML = bouquetArt(b)
     const noms = b.fleurs.map((f) => flowerById(f))
+    const pool = photosByTheme(b.etat === 'sec' ? 'seche' : 'bouquet')
+    const ph = pool[[...b.id].reduce((a, c) => a + c.charCodeAt(0), 0) % pool.length]
     $('#dlg-body')!.innerHTML = typo(`
+      <figure class="dlg-cover dlg-cover--sm">${photoImg(ph, 'photo', true)}<figcaption class="ph-label">Photo d’illustration</figcaption></figure>
       <p>${etiquette(b.etat === 'sec' ? 'séché' : 'frais')} ${etiquette(`taille ${b.taille}`)}</p>
       <h2 class="h2" id="dlg-t">${b.nom}</h2>
       <p>${b.desc}</p>

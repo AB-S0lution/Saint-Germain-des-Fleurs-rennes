@@ -8,10 +8,17 @@ import type { Dried } from '../data/dried'
 import { flowerById } from '../data/flowers'
 import { photoImg, type Photo } from '../data/photos'
 
-/** Bandeau de photos d'illustration (Unsplash), révélé au défilement. */
+/** Bandeau de photos d'illustration (Unsplash), révélé au défilement.
+ *  Sur téléphone, les bandeaux `--hero` et `--slim` deviennent un carrousel à balayer (scroll-snap). */
 export function photoBand(list: Photo[], cls = ''): string {
-  return `<div class="ph-band ${cls}">${list.map((ph) => `<figure class="ph" data-reveal="clip">${photoImg(ph)}</figure>`).join('')}</div>
-<p class="ph-note">Photos d’illustration (Unsplash), pas des photos de la boutique.</p>`
+  const swipe = /ph-band--(hero|slim)/.test(cls)
+  return `<div class="ph-band ${cls}"${swipe ? ' tabindex="0" role="region" aria-label="Photos d’illustration, à faire défiler"' : ''}>${list.map((ph) => `<figure class="ph" data-reveal="clip">${photoImg(ph)}</figure>`).join('')}</div>
+<p class="ph-note">Photos d’illustration (Unsplash), pas des photos de la boutique.${swipe ? '<span class="swipe-hint" aria-hidden="true"> Balayez pour voir la suite →</span>' : ''}</p>`
+}
+
+/** Une photo d'illustration encadrée, avec son étiquette « Photo d'illustration ». */
+export function photoFrame(ph: Photo, cls = ''): string {
+  return `<figure class="ph-frame ${cls}">${photoImg(ph)}<figcaption class="ph-label">Photo d’illustration</figcaption></figure>`
 }
 
 export function pageHead(o: { titre: string; lede: string; kicker?: string }): string {

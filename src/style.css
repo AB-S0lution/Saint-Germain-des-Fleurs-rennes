@@ -560,3 +560,127 @@ html.menu-open:not(.lenis) body { overflow: hidden; }
   .sample-note { font-size: 0.875rem; }
   .link:not(p .link) { display: inline-flex; align-items: center; min-height: 44px; }
 }
+
+/* ======================= photos d'illustration ======================= */
+/* Les <img> portent width/height ; le cadre fixe le ratio, l'image couvre. */
+.photo { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--bg-2); }
+.ph, .ph-frame, .post-thumb, .dlg-cover { position: relative; margin: 0; overflow: hidden; border-radius: var(--r-card); background: var(--bg-2); }
+.ph { aspect-ratio: 4 / 5; }
+.ph .photo { transition: transform 1.1s var(--ease-grow); }
+@media (hover: hover) and (pointer: fine) { .ph:hover .photo { transform: scale(1.04); } }
+.ph-label { position: absolute; left: 0.6rem; bottom: 0.6rem; z-index: 1; font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.02em; line-height: 1.2; padding: 0.25rem 0.55rem; border-radius: 99px; background: rgb(28 27 25 / 0.62); color: #fff; pointer-events: none; }
+.ph-note { font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-2); margin: 0.8rem 0 0; }
+.swipe-hint { display: none; }
+
+.ph-band { display: grid; gap: clamp(0.6rem, 1.6vw, 1.2rem); grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }
+.ph-band--hero { grid-template-columns: 1fr 1.25fr 1fr; align-items: end; }
+.ph-band--hero .ph:nth-child(2) { aspect-ratio: 4 / 5.4; }
+.ph-band--hero .ph:not(:nth-child(2)) { aspect-ratio: 4 / 4.6; }
+.ph-band--quad { grid-template-columns: repeat(4, 1fr); margin-bottom: 1.6rem; }
+.ph-band--quad .ph { aspect-ratio: 3 / 4; }
+.ph-band--slim { grid-template-columns: repeat(3, 1fr); }
+.ph-band--slim .ph { aspect-ratio: 16 / 9; }
+.ph-mosaic { grid-template-columns: repeat(4, 1fr); grid-auto-flow: dense; }
+.ph-mosaic .ph { aspect-ratio: 1; }
+.ph-mosaic .ph:nth-child(5n + 1) { grid-column: span 2; grid-row: span 2; }
+.ph-top { padding-top: 0; }
+@media (max-width: 63.99rem) {
+  .ph-band--quad { grid-template-columns: repeat(2, 1fr); }
+  .ph-mosaic { grid-template-columns: repeat(2, 1fr); }
+  .ph-mosaic .ph:nth-child(5n + 1) { grid-column: span 2; grid-row: auto; aspect-ratio: 16 / 10; }
+}
+/* Téléphone : les bandeaux « hero » et « slim » deviennent un carrousel à balayer. */
+@media (max-width: 47.99rem) {
+  .ph-band--hero, .ph-band--slim { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; margin-inline: calc(var(--gut) * -1); padding-inline: var(--gut); scroll-padding-inline: var(--gut); }
+  .ph-band--hero::-webkit-scrollbar, .ph-band--slim::-webkit-scrollbar { display: none; }
+  .ph-band--hero .ph, .ph-band--slim .ph { flex: 0 0 78%; scroll-snap-align: start; }
+  .ph-band--hero .ph, .ph-band--hero .ph:nth-child(2), .ph-band--hero .ph:not(:nth-child(2)) { aspect-ratio: 4 / 5; }
+  .ph-band--slim .ph { aspect-ratio: 4 / 3; }
+  .swipe-hint { display: inline; color: var(--saison-ink); }
+}
+
+.ph-gallery { columns: 1; column-gap: 1rem; }
+@media (min-width: 36rem) { .ph-gallery { columns: 2; } }
+@media (min-width: 64rem) { .ph-gallery { columns: 3; } }
+.ph-gallery .ph { break-inside: avoid; margin: 0 0 1rem; }
+.ph-gallery .ph--portrait { aspect-ratio: 3 / 4; }
+.ph-gallery .ph--paysage { aspect-ratio: 4 / 3; }
+.ph-gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 2rem 0.9rem 0.75rem; font-size: 0.875rem; line-height: 1.35; color: #fff; background: linear-gradient(0deg, rgb(28 27 25 / 0.75), transparent); }
+
+.post-thumb { margin: -1.5rem -1.5rem 0.6rem; border-radius: var(--r-card) var(--r-card) 0 0; aspect-ratio: 16 / 10; }
+.jt .post-thumb { margin: -1.4rem -1.4rem 0.6rem; }
+.post--lead .post-thumb { aspect-ratio: 21 / 9; }
+@media (max-width: 47.99rem) { .post--lead .post-thumb { aspect-ratio: 16 / 10; } }
+.post .photo { transition: transform 1s var(--ease-grow); }
+@media (hover: hover) and (pointer: fine) { .post:hover .photo { transform: scale(1.04); } }
+.dlg-cover { aspect-ratio: 16 / 9; margin: 0 0 1.2rem; }
+.dlg-cover--sm { aspect-ratio: 16 / 8; margin: 0 0 0.4rem; border-radius: var(--r-field); }
+
+.contact-side { display: grid; gap: 1.2rem; align-content: start; }
+.contact-photo { aspect-ratio: 3 / 2; }
+.place-photo { aspect-ratio: 16 / 10; width: calc(100% + 3rem); margin: -1.5rem -1.5rem 0.6rem; border-radius: var(--r-card) var(--r-card) 0 0; }
+.occ-side { display: grid; gap: 1rem; align-content: start; }
+.occ-photo { aspect-ratio: 16 / 10; }
+
+/* ======================= téléphone et tablette ======================= */
+body { overflow-wrap: break-word; }
+h1, h2, h3, .display, .h2, .h3 { overflow-wrap: break-word; hyphens: auto; -webkit-hyphens: auto; }
+.display { font-size: clamp(2.15rem, 8.4vw, 7rem); }
+.wrap { padding-inline: max(var(--gut), env(safe-area-inset-left)) max(var(--gut), env(safe-area-inset-right)); }
+.site-header { padding-top: env(safe-area-inset-top); }
+.menu { padding-top: calc(5.5rem + env(safe-area-inset-top)); padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+.site-footer { padding-bottom: calc(2rem + env(safe-area-inset-bottom)); }
+.menu-btn { min-height: 44px; }
+.hours { width: 100%; }
+.hours td { text-align: right; }
+.plain li > span:last-child { text-align: right; }
+
+/* Tablette portrait : le hero reste sur une colonne, la presse sur deux. */
+@media (min-width: 48rem) and (max-width: 61.99rem) and (orientation: portrait) {
+  .hero-in { grid-template-columns: 1fr; grid-template-rows: auto 1fr; padding-top: 6rem; }
+  .hero-svg { max-height: 50svh; }
+}
+@media (min-width: 48rem) and (max-width: 63.99rem) {
+  .quote { grid-column: span 3; }
+}
+/* Tablette paysage basse : moins de hauteur pour la roue et la route. */
+@media (max-height: 34rem) and (orientation: landscape) {
+  .hero-title { font-size: clamp(2rem, 6vw, 4.5rem); }
+  .wheel-box { width: min(100%, 22rem, 70svh); }
+  .wheel-info .lede { min-height: 0; }
+}
+
+@media (max-width: 40rem) {
+  .btn { white-space: normal; text-align: center; justify-content: center; }
+  .hero-cta .btn, .cta-actions .btn { flex: 1 1 auto; }
+  .hero-title { font-size: clamp(2.1rem, 11vw, 3.4rem); }
+  .page-head { padding-top: calc(6rem + env(safe-area-inset-top)); }
+  .lede { font-size: 1.08rem; }
+  .card-art { aspect-ratio: 5 / 4.2; }
+  .dlg-body, #dlg .dlg-body { padding: 1.4rem 1.1rem; }
+  .dlg-art { min-height: 12rem; }
+  .occ-sug li { flex-wrap: wrap; }
+}
+
+@media (pointer: coarse), (max-width: 40rem) {
+  .stem-p, .count, .tl-src, .quote figcaption, .rmoment, .fcard-m, .plant-type, .post-meta, .marquee-track p, .ph-note, .stem-n { font-size: 0.875rem; }
+  .kicker { font-size: 0.82rem; }
+  .faq-item summary { min-height: 44px; }
+  .post .link, .card-foot .link { min-height: 44px; }
+  /* Flou d'en-tête allégé sur appareils tactiles. */
+  .site-header::before { backdrop-filter: none; -webkit-backdrop-filter: none; background: color-mix(in srgb, var(--bg) 96%, transparent); }
+}
+
+/* Boucles hors écran : en pause. */
+.is-offscreen .sway, .is-offscreen .marquee-track { animation-play-state: paused; }
+
+/* Route au doigt : panneaux à balayer, sans épinglage. */
+.route.is-swipe .route-pin { height: auto; overflow: visible; padding-block: 1.5rem 2rem; }
+.route.is-swipe .route-road { display: none; }
+.route.is-swipe .route-track { width: auto; overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; gap: 1rem; padding-inline: var(--gut); scroll-padding-inline: var(--gut); will-change: auto; }
+.route.is-swipe .route-track::-webkit-scrollbar { display: none; }
+.route.is-swipe .rpanel { width: min(86vw, 26rem); height: auto; padding: 1.4rem 1.2rem; scroll-snap-align: start; background: color-mix(in srgb, #faf7f0 78%, transparent); border-radius: var(--r-card); }
+.route.is-swipe .rcard .rscene { width: min(100%, 13rem); }
+.route.is-swipe .sun { width: 4.5rem; height: 4.5rem; top: 1rem; }
+.route-hint { display: none; }
+.route.is-swipe .route-hint { display: block; position: relative; font-family: var(--font-mono); font-size: 0.875rem; color: #2f2d2a; margin: 0 0 0.8rem; padding-inline: var(--gut); }

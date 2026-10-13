@@ -1,5 +1,6 @@
 import { bootPage } from '../core/boot'
-import { pageHead, ctaBand, orderMailto } from '../core/ui'
+import { pageHead, ctaBand, orderMailto, photoBand } from '../core/ui'
+import { photoBySlug } from '../data/photos'
 import { composerStems, stemFlower, type ComposerStem } from '../data/composerStems'
 import { MOIS, prochainMois } from '../data/months'
 import { bouquetSVG, stemIcon } from '../core/art'
@@ -50,6 +51,10 @@ ${pageHead({ kicker: 'Composer à la tige', titre: `Votre bouquet ${deMois(month
       </div>
     </aside>
   </div>
+</section>
+<section class="section wrap">
+  <div class="section-head"><h2 class="h2" data-split>Ce qui finit dans le papier kraft</h2><p class="lede" data-reveal>Des tiges de saison, montées en bouquet rond ou champêtre, liées au raphia.</p></div>
+  ${photoBand(['boutique-pleine', 'etagere-bouquet', 'dahlias-vase'].map(photoBySlug), 'ph-band--hero')}
 </section>
 ${ctaBand('Pas envie de composer ? On le fait pour vous.')}
 `

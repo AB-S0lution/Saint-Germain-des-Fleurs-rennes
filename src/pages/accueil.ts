@@ -7,7 +7,7 @@ import { testimonials } from '../data/testimonials'
 import { posts } from '../data/posts'
 import { composerStems, stemFlower } from '../data/composerStems'
 import { capitalise } from '../core/dom'
-import { photos, photoBySlug, photoImg } from '../data/photos'
+import { photoBySlug, photoImg } from '../data/photos'
 import { photoBand } from '../core/ui'
 import { routeStops } from '../data/routeStops'
 import { flowerHead, stemIcon } from '../core/art'
@@ -130,7 +130,7 @@ bootPage('accueil', ({ month }) => {
 
 <section class="section wrap jt">
   <div class="section-head"><h2 class="h2" data-split>Dans le journal</h2></div>
-  <div class="grid g-3">${[...posts].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3).map((p, i) => `<article class="post" data-reveal><figure class="post-thumb">${photoImg(photos[(i * 5 + 3) % photos.length])}</figure><p class="post-meta">${etiquette(p.categorie)} <span>${capitalise(new Date(p.date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }))}</span></p><h3 class="h3">${p.titre}</h3><p>${p.resume}</p><a class="link" href="${href('journal.html')}">Lire dans le journal</a></article>`).join('')}</div>
+  <div class="grid g-3">${[...posts].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3).map((p) => `<article class="post" data-reveal><figure class="post-thumb">${photoImg(photoBySlug(p.photo))}<figcaption class="ph-label">Photo d’illustration</figcaption></figure><p class="post-meta">${etiquette(p.categorie)} <span>${capitalise(new Date(p.date).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }))}</span></p><h3 class="h3">${p.titre}</h3><p>${p.resume}</p><a class="link" href="${href('journal.html')}">Lire dans le journal</a></article>`).join('')}</div>
 </section>
 
 <section class="section wrap visit">
@@ -175,12 +175,17 @@ ${ctaBand()}`
     const state = { intro: 0, scroll: 0 }
     const draw = () => render(Math.max(state.intro, state.scroll))
     render(0)
-    const small = window.matchMedia('(max-width: 47.99rem)').matches
     gsap.to(state, { intro: 0.2, duration: 2, ease: 'power2.out', delay: 0.5, onUpdate: draw })
-    gsap.to(state, { scroll: 1, ease: 'none', onUpdate: draw, scrollTrigger: { trigger: '#hero', start: 'top top', end: small ? '+=120%' : '+=170%', scrub: 0.7, pin: true, anticipatePin: 1 } })
     gsap.set(title, { visibility: 'visible' })
     const split = SplitText.create(title, { type: 'chars,words', charsClass: 'hc' })
-    gsap.from(split.chars, { y: () => gsap.utils.random(-70, 70), x: () => gsap.utils.random(-30, 30), rotation: () => gsap.utils.random(-28, 28), opacity: 0, duration: 1.6, ease: 'expo.out', stagger: { each: 0.03, from: 'random' }, delay: 0.1 })
+    // Ordinateur : épinglage long et lettres très dispersées. Tactile : épinglage court, dispersion réduite.
+    const mm = gsap.matchMedia()
+    mm.add({ desk: '(min-width: 48rem) and (pointer: fine)', touch: 'not all and (min-width: 48rem) and (pointer: fine)' }, (c) => {
+      const desk = !!c.conditions?.desk
+      const amp = desk ? 1 : 0.45
+      gsap.to(state, { scroll: 1, ease: 'none', onUpdate: draw, scrollTrigger: { trigger: '#hero', start: 'top top', end: desk ? '+=170%' : '+=90%', scrub: desk ? 0.7 : 0.4, pin: true, anticipatePin: 1 } })
+      gsap.from(split.chars, { y: () => gsap.utils.random(-70, 70) * amp, x: () => gsap.utils.random(-30, 30) * amp, rotation: () => gsap.utils.random(-28, 28) * amp, opacity: 0, duration: desk ? 1.6 : 1.2, ease: 'expo.out', stagger: { each: desk ? 0.03 : 0.022, from: 'random' }, delay: 0.1 })
+    })
     gsap.from('.hero-sub, .hero-cta', { y: 24, opacity: 0, duration: 1, delay: 0.9, stagger: 0.12, ease: 'power3.out' })
   }
 

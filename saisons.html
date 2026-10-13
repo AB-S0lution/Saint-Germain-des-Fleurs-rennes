@@ -21,6 +21,8 @@
         if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
           d.classList.add('js-motion');
           if (sessionStorage.getItem('sgf-t')) d.classList.add('is-entering');
+          // Secours : si le module ne démarre pas en 3 s, on affiche la page sans mouvement.
+          setTimeout(function () { if (!d.classList.contains('motion-ready')) d.classList.remove('js-motion', 'is-entering'); }, 3000);
         }
       } catch (e) {}
     </script>

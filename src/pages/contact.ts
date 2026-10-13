@@ -1,5 +1,6 @@
 import { bootPage } from '../core/boot'
-import { pageHead, ctaBand, orderMailto, mapsLink } from '../core/ui'
+import { pageHead, ctaBand, orderMailto, mapsLink, photoFrame, photoBand } from '../core/ui'
+import { photoBySlug } from '../data/photos'
 import { SITE, hours, ratingBlooms } from '../data/site'
 import { $ } from '../core/dom'
 
@@ -30,6 +31,8 @@ ${pageHead({ kicker: 'Contact et commande', titre: 'On commande par téléphone 
       <p>${mapsLink('Ouvrir dans Google Maps')} · <a class="link" href="${SITE.instagramUrl}" target="_blank" rel="noopener">Instagram @${SITE.instagram}</a></p>
       <p class="hint">Métro ligne B, station Saint-Germain. Entrée accessible en fauteuil roulant (source agrégateur, à vérifier). Évaluation sur Blooms.fr : ${ratingBlooms.note}/${ratingBlooms.sur} (${ratingBlooms.avis} notes), source non confirmée.</p>
     </div>
+    <div class="contact-side">
+    ${photoFrame(photoBySlug('devanture-fleurs'), 'contact-photo')}
     <div class="hours-card" data-reveal>
       <h2 class="h3">Horaires</h2>
       <p class="open-now" id="open-now" aria-live="polite">${ouvertMaintenant()}</p>
@@ -37,6 +40,7 @@ ${pageHead({ kicker: 'Contact et commande', titre: 'On commande par téléphone 
         ${hours.map((r) => `<tr class="${r.idx === new Date().getDay() ? 'today' : ''}"><th scope="row">${r.jour}</th><td>${r.ouvert ? `${h(r.debut)} à ${h(r.fin)}${r.note ? ' *' : ''}` : 'fermé'}</td></tr>`).join('')}
       </tbody></table>
       <p class="hint">* Horaires relevés sur Instagram et Blooms.fr. Le dimanche n’apparaît pas dans toutes les sources : à confirmer.</p>
+    </div>
     </div>
   </div>
 </section>
@@ -53,6 +57,7 @@ ${pageHead({ kicker: 'Contact et commande', titre: 'On commande par téléphone 
     </form>
   </div>
 </section>
+<section class="section wrap">${photoBand(['seaux-etal', 'bouquets-etal', 'panier-osier'].map(photoBySlug), 'ph-band--slim')}</section>
 ${ctaBand('Plutôt une voix ? Appelez la boutique.')}
 `, () => {
   const form = $<HTMLFormElement>('#brief')!

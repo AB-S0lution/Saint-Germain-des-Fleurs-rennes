@@ -1,5 +1,6 @@
 import { bootPage } from '../core/boot'
-import { pageHead, ctaBand, etiquette } from '../core/ui'
+import { pageHead, ctaBand, etiquette, photoBand } from '../core/ui'
+import { photoBySlug } from '../data/photos'
 import { routeStops } from '../data/routeStops'
 import { sceneSVG } from '../core/art'
 import { flowerById } from '../data/flowers'
@@ -17,6 +18,7 @@ ${pageHead({ kicker: 'La route', titre: 'Le voyage d’une tige.', lede: `Cinq �
 <section class="route" id="route" aria-label="Le trajet en cinq étapes">
   <div class="route-pin">
     <div class="route-sky" aria-hidden="true">${SKY.map((c, i) => `<i data-k="${i}" style="background:linear-gradient(180deg, ${c}, color-mix(in srgb, ${c} 40%, #f3eee4))"></i>`).join('')}<b class="sun"></b></div>
+    <p class="route-hint" aria-hidden="true">Balayez les étapes →</p>
     <div class="route-track" id="track">
       <div class="route-road" aria-hidden="true"><svg id="road-svg" viewBox="0 0 5000 400" preserveAspectRatio="none"><path id="road-bg" d="" /><path id="road" d="" pathLength="1" /></svg><div class="cart" id="cart"><svg viewBox="0 0 60 70"><path d="M30 66V30" stroke="#5E6F4E" stroke-width="3"/><circle cx="30" cy="22" r="14" fill="${vedette.teintes[0]}"/><circle cx="30" cy="22" r="5" fill="${vedette.teintes[1]}"/></svg></div></div>
       ${routeStops.map((s, i) => `<article class="rpanel" data-i="${i}">
@@ -30,6 +32,10 @@ ${pageHead({ kicker: 'La route', titre: 'Le voyage d’une tige.', lede: `Cinq �
       </article>`).join('')}
     </div>
   </div>
+</section>
+<section class="section wrap">
+  <div class="section-head"><h2 class="h2" data-split>Au bout de la route</h2><p class="lede" data-reveal>Le champ à l’aube, l’étal du samedi, puis les seaux de la place Saint-Germain.</p></div>
+  ${photoBand(['champ-marguerites', 'panier-osier', 'seau-pivoines'].map(photoBySlug), 'ph-band--hero')}
 </section>
 <section class="section wrap prose">
   <p data-reveal>Nous n’affichons pas de distance : elle n’a pas été mesurée pour ce site. Les jours et horaires de marché sont à confirmer auprès de la boutique.</p>
@@ -65,7 +71,6 @@ ${ctaBand()}
     road.style.strokeDasharray = '1'
     total = track.scrollWidth
   }
-  build()
   const fracAtX = (x: number) => {
     let lo = 0
     let hi = 1
@@ -89,12 +94,38 @@ ${ctaBand()}
     gsap.set(sun, { x: p * vw * 0.78, y: -Math.sin(p * Math.PI) * 70, scale: 1 + (p > 0.8 ? (p - 0.8) * 1.5 : 0), opacity: p > 0.92 ? 1 - (p - 0.92) * 8 : 1 })
     panels.forEach((el, i) => { const near = 1 - Math.min(1, Math.abs(k - i) / 1.1); gsap.set(el, { opacity: 0.35 + 0.65 * near }) })
   }
-  const tween = gsap.to(track, {
-    x: () => -(track.scrollWidth - window.innerWidth),
-    ease: 'none',
-    scrollTrigger: { trigger: pin, start: 'top top', end: () => `+=${track.scrollWidth - window.innerWidth}`, pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, onRefresh: build, onUpdate: (self) => update(self.progress) },
+  // Ordinateur : défilement horizontal épinglé. Téléphone et tablette tactile : panneaux à balayer
+  // (scroll-snap natif), le ciel et le soleil suivent le balayage, sans épinglage fragile.
+  const mm = gsap.matchMedia()
+  mm.add({ desk: '(min-width: 48rem) and (hover: hover) and (pointer: fine)', touch: 'not all and (min-width: 48rem) and (hover: hover) and (pointer: fine)' }, (c) => {
+    if (c.conditions?.desk) {
+      build()
+      gsap.to(track, {
+        x: () => -(track.scrollWidth - window.innerWidth),
+        ease: 'none',
+        scrollTrigger: { trigger: pin, start: 'top top', end: () => `+=${track.scrollWidth - window.innerWidth}`, pin: true, scrub: 0.6, anticipatePin: 1, invalidateOnRefresh: true, onRefresh: build, onUpdate: (self) => update(self.progress) },
+      })
+      update(0)
+      return
+    }
+    route.classList.add('is-swipe')
+    const vw = () => window.innerWidth
+    let raf = 0
+    const onSwipe = () => {
+      cancelAnimationFrame(raf)
+      raf = requestAnimationFrame(() => {
+        const max = track.scrollWidth - track.clientWidth
+        const p = max > 0 ? track.scrollLeft / max : 0
+        const k = p * 4
+        skies.forEach((s, i) => gsap.set(s, { opacity: clamp(1 - Math.abs(k - i)) }))
+        gsap.set(sun, { x: p * vw() * 0.6, y: -Math.sin(p * Math.PI) * 24 })
+        panels.forEach((el, i) => gsap.set(el, { opacity: 0.55 + 0.45 * (1 - Math.min(1, Math.abs(k - i) / 1.1)) }))
+      })
+    }
+    track.addEventListener('scroll', onSwipe, { passive: true })
+    onSwipe()
+    gsap.from(panels, { opacity: 0, x: 40, duration: 0.8, stagger: 0.08, ease: 'power3.out', scrollTrigger: { trigger: track, start: 'top 85%', once: true } })
+    return () => { track.removeEventListener('scroll', onSwipe); cancelAnimationFrame(raf); route.classList.remove('is-swipe') }
   })
-  update(0)
-  void tween
   ScrollTrigger.refresh()
 })

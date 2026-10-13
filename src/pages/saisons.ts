@@ -1,5 +1,6 @@
 import { bootPage } from '../core/boot'
-import { pageHead, ctaBand, monthBar, etiquette } from '../core/ui'
+import { pageHead, ctaBand, monthBar, etiquette, photoBand } from '../core/ui'
+import { photoBySlug } from '../data/photos'
 import { flowers, flowerById, type Couleur } from '../data/flowers'
 import { MOIS, MOIS_COURTS } from '../data/months'
 import { flowerHead, stemIcon } from '../core/art'
@@ -51,6 +52,10 @@ ${pageHead({ kicker: 'Fleurs de saison', titre: 'Douze mois, douze bouquets.', l
   </div>
 </section>
 
+<section class="section wrap">
+  <div class="section-head"><h2 class="h2" data-split>Quatre saisons au champ</h2><p class="lede" data-reveal>Renoncules au printemps, cosmos l’été, dahlias à l’automne, fleurs séchées l’hiver.</p></div>
+  ${photoBand(['champ-melange', 'champ-rose', 'dahlias-macro', 'sechees-bleu'].map(photoBySlug), 'ph-band--quad')}
+</section>
 <section class="section wrap">
   <div class="section-head"><h2 class="h2" data-split>L’index des fleurs</h2><p class="lede" data-reveal>Quarante variétés d’exemple. Sept sont citées par la presse comme cultivées à la ferme ; les autres sont plausibles en Bretagne mais restent à confirmer.</p></div>
   <div class="cat-tools">
@@ -106,7 +111,12 @@ ${ctaBand('Composez avec ce qui est ouvert ce mois-ci.')}
   setMonth(start)
   applySeason()
   if (!reduced) {
-    gsap.to({}, { scrollTrigger: { trigger: '.wheel-pin', start: 'top top', end: '+=260%', pin: true, scrub: true, anticipatePin: 1, onUpdate: (self) => setMonth(start + Math.min(11, Math.floor(self.progress * 12))) } })
+    // Tactile : épinglage plus court (douze mois en 140 %), sans scrub ; les puces restent utilisables.
+    const mm = gsap.matchMedia()
+    mm.add({ desk: '(min-width: 48rem) and (pointer: fine) and (min-height: 34rem)', touch: 'not all and (min-width: 48rem) and (pointer: fine) and (min-height: 34rem)' }, (c) => {
+      const desk = !!c.conditions?.desk
+      gsap.to({}, { scrollTrigger: { trigger: '.wheel-pin', start: 'top top', end: desk ? '+=260%' : '+=140%', pin: true, scrub: desk ? true : 0.3, anticipatePin: 1, onUpdate: (self) => setMonth(start + Math.min(11, Math.floor(self.progress * 12))) } })
+    })
   }
 
   // --- index des fleurs ---

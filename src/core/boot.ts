@@ -27,6 +27,8 @@ export function bootPage(id: string, build: (ctx: { month: number; saison: Saiso
   const main = document.getElementById('contenu') as HTMLElement
   initMenu()
   const ctx: Ctx = { id, reduced, month: m, saison, main }
+  // Signale au script de secours (dans chaque HTML) que le module a bien démarré.
+  document.documentElement.classList.add('motion-ready')
   try {
     motion.initScroll()
     motion.initHeader()
@@ -36,6 +38,7 @@ export function bootPage(id: string, build: (ctx: { month: number; saison: Saiso
     motion.initReveals(document)
     motion.initMagnetic(document)
     motion.initCounters(document)
+    motion.initOffscreenPause(document)
     motion.enterTransition()
     const refresh = () => motion.ScrollTrigger.refresh()
     document.fonts?.ready.then(refresh)

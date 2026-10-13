@@ -1,9 +1,11 @@
 import { bootPage } from '../core/boot'
-import { pageHead } from '../core/ui'
+import { pageHead, photoBand } from '../core/ui'
+import { photoBySlug } from '../data/photos'
 import { SITE } from '../data/site'
 
 bootPage('confidentialite', () => `
 ${pageHead({ kicker: 'Vie privée', titre: 'Confidentialité.', lede: 'Ce site ne collecte aucune donnée personnelle.' })}
+<section class="wrap ph-top">${photoBand(['prairie-coteau', 'centre-table', 'sechees-brun'].map(photoBySlug), 'ph-band--slim')}</section>
 <section class="section wrap prose">
   <h2>Ce que le site ne fait pas</h2>
   <ul><li>Pas de cookie, pas de traceur, pas de statistiques de fréquentation.</li><li>Pas de formulaire envoyé à un serveur : le formulaire de la page Contact prépare un mail dans votre application, rien n’est transmis par le site.</li><li>Pas de paiement en ligne.</li><li>Pas de contenu chargé depuis un autre site : les polices et les images sont servies par le site lui-même.</li></ul>

@@ -1,5 +1,5 @@
 import { bootPage } from '../core/boot'
-import { pageHead, ctaBand, etiquette, sampleNote, photoBand } from '../core/ui'
+import { pageHead, ctaBand, etiquette, sampleNote } from '../core/ui'
 import { posts } from '../data/posts'
 import { $, $$, capitalise } from '../core/dom'
 import { photos, photoImg } from '../data/photos'

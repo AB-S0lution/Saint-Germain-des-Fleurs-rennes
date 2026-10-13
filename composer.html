@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Composer votre bouquet | Saint Germain des Fleurs, Rennes</title>
+    <meta name="description" content="Composez un bouquet avec les tiges de saison, puis envoyez votre commande par mail ou téléphone." />
+    <meta name="theme-color" content="#f3eee4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1c1b19" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light dark" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Saint Germain des Fleurs" />
+    <meta property="og:title" content="Composer votre bouquet | Saint Germain des Fleurs, Rennes" />
+    <meta property="og:description" content="Composez un bouquet avec les tiges de saison, puis envoyez votre commande par mail ou téléphone." />
+    <meta name="twitter:card" content="summary" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      try {
+        var d = document.documentElement;
+        if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          d.classList.add('js-motion');
+          if (sessionStorage.getItem('sgf-t')) d.classList.add('is-entering');
+        }
+      } catch (e) {}
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <noscript><p style="padding:6rem 1.5rem 2rem;font-family:system-ui">Ce site a besoin de JavaScript pour s’afficher. Saint Germain des Fleurs, 4 place Saint-Germain, Rennes : 07 84 87 20 23, saintgermaindesfleurs@gmail.com.</p></noscript>
+    <script type="module" src="/src/pages/composer.ts"></script>
+  </body>
+</html>

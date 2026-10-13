@@ -550,3 +550,13 @@ html.menu-open:not(.lenis) body { overflow: hidden; }
 .ct-stems li { height: 12rem; width: 4.2rem; flex: none; transform: rotate(var(--r)); transform-origin: 50% 100%; margin-inline: -0.4rem; }
 .ct-stems svg { height: 100%; width: auto; }
 .jt .post { padding: 1.4rem; }
+
+/* Téléphone : cibles tactiles ≥ 44 px, notes lisibles. */
+@media (pointer: coarse), (max-width: 40rem) {
+  .chip, .months-nav .chip { min-height: 44px; }
+  .brand { min-height: 44px; }
+  .foot-links li { margin-bottom: 0; }
+  .foot-links a, .site-footer address a { display: inline-flex; align-items: center; min-height: 44px; }
+  .sample-note { font-size: 0.875rem; }
+  .link:not(p .link) { display: inline-flex; align-items: center; min-height: 44px; }
+}

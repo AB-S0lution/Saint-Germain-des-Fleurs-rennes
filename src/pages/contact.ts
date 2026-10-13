@@ -24,7 +24,7 @@ ${pageHead({ kicker: 'Contact et commande', titre: 'On commande par téléphone 
       <h2 class="h3">Téléphone</h2>
       <p><a class="big-link" href="${SITE.telHref}">${SITE.tel}</a></p>
       <h2 class="h3">Mail</h2>
-      <p><a class="big-link" href="mailto:${SITE.email}">${SITE.email}</a></p>
+      <p><a class="big-link" href="mailto:${SITE.email}">${SITE.email.replace('@', '<wbr>@')}</a></p>
       <h2 class="h3">Boutique</h2>
       <address>${SITE.adresse.rue}<br>${SITE.adresse.cp} ${SITE.adresse.ville}</address>
       <p>${mapsLink('Ouvrir dans Google Maps')} · <a class="link" href="${SITE.instagramUrl}" target="_blank" rel="noopener">Instagram @${SITE.instagram}</a></p>

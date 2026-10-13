@@ -55,7 +55,12 @@ export function initReveals(root: ParentNode = document): void {
     start: 'top 92%',
     once: true,
     onEnter: (batch) => {
-      batch.forEach((el, i) => {
+      // Un saut (ancre, défilement rapide au doigt) lâche des dizaines d'éléments d'un coup :
+      // ceux déjà passés au-dessus de l'écran apparaissent sans attendre, et le décalage est plafonné.
+      let n = 0
+      batch.forEach((el) => {
+        if (el.getBoundingClientRect().bottom < 0) { gsap.set(el, { opacity: 1, y: 0 }); (el as HTMLElement).style.clipPath = 'none'; return }
+        const i = Math.min(n++, 5)
         const clip = (el as HTMLElement).dataset.reveal === 'clip'
         const vars: gsap.TweenVars = {
           opacity: 1,
@@ -65,7 +70,8 @@ export function initReveals(root: ParentNode = document): void {
           ease: clip ? 'power3.inOut' : 'power3.out',
           overwrite: 'auto',
         }
-        if (clip) { vars.clipPath = 'inset(0% 0% 0% 0%)'; vars.clearProps = 'clipPath' }
+        // clearProps rendrait la main à la règle CSS `.js-motion [data-reveal="clip"]` (masque fermé) : on fige l'état ouvert.
+        if (clip) { vars.clipPath = 'inset(0% 0% 0% 0%)'; vars.onComplete = () => { (el as HTMLElement).style.clipPath = 'none' } }
         gsap.to(el, vars)
       })
     },

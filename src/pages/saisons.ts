@@ -94,10 +94,11 @@ ${ctaBand('Composez avec ce qui est ouvert ce mois-ci.')}
     chips.forEach((c, k) => c.setAttribute('aria-pressed', String(k === i)))
     // rotation de la roue et fondu des fleurs
     const rot = -i * 30
-    if (reduced) gsap.set(ring, { rotation: rot })
-    else gsap.to(ring, { rotation: rot, duration: 0.9, ease: 'power3.out', overwrite: true })
+    // svgOrigin : la roue tourne autour du centre du viewBox (sinon GSAP prend le coin de sa boîte et la roue sort du cadre).
+    if (reduced) gsap.set(ring, { rotation: rot, svgOrigin: '0 0' })
+    else gsap.to(ring, { rotation: rot, svgOrigin: '0 0', duration: 0.9, ease: 'power3.out', overwrite: true })
     $$<SVGTextElement>('.sec-t', ring).forEach((t) => { if (reduced) gsap.set(t, { rotation: -(Number(t.dataset.r) + rot) }); else gsap.to(t, { rotation: -(Number(t.dataset.r) + rot), duration: 0.9, ease: 'power3.out', overwrite: true, transformOrigin: 'center' }) })
-    blooms.forEach((b, k) => { if (reduced) gsap.set(b, { opacity: k === i ? 1 : 0 }); else gsap.to(b, { opacity: k === i ? 1 : 0, scale: k === i ? 1 : 0.8, rotation: k === i ? 0 : -20, duration: 0.7, ease: 'power3.out', overwrite: true, transformOrigin: '0 0' }) })
+    blooms.forEach((b, k) => { if (reduced) gsap.set(b, { opacity: k === i ? 1 : 0 }); else gsap.to(b, { opacity: k === i ? 1 : 0, scale: k === i ? 1 : 0.8, rotation: k === i ? 0 : -20, duration: 0.7, ease: 'power3.out', overwrite: true, svgOrigin: '0 0' }) })
   }
   const stateText = () => {
     const over = currentMonth() !== realMonth()

@@ -78,6 +78,43 @@ export function initReveals(root: ParentNode = document): void {
   // Et au bout de 4 s, tout ce qui est déjà à l'écran ou au-dessus est visible quoi qu'il arrive.
   window.setTimeout(() => els.forEach((el) => { if (!el.dataset.revealed && el.getBoundingClientRect().top < window.innerHeight) showNow(el) }), 4000)
   window.addEventListener('beforeprint', () => els.forEach(showNow), { once: true })
+  // Quand le défilement s'arrête : tout ce qui est à l'écran ou déjà dépassé apparaît (positions
+  // ScrollTrigger périmées après un filtre, derniers éléments en bas de page qui n'atteignent jamais 92 %).
+  let idle = 0
+  const sweep = () => {
+    const vh = window.innerHeight
+    els.forEach((el) => {
+      if (!el.isConnected) return
+      // Déjà « révélé » mais resté transparent sans animation en cours (tween interrompu) : on l'affiche.
+      if (el.dataset.revealed) { if (!gsap.isTweening(el) && Number(getComputedStyle(el).opacity) < 0.05) showNow(el); return }
+      const r = el.getBoundingClientRect()
+      if (!r.width && !r.height) return
+      if (r.bottom < 0) showNow(el)
+      else if (r.top < vh * 0.96) {
+        el.dataset.revealed = '1'
+        const v: gsap.TweenVars = { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', overwrite: 'auto' }
+        if (el.dataset.reveal === 'clip') { v.clipPath = 'inset(0% 0% 0% 0%)'; v.onComplete = () => { el.style.clipPath = 'none' } }
+        gsap.to(el, v)
+      }
+    })
+  }
+  window.addEventListener('scroll', () => { window.clearTimeout(idle); idle = window.setTimeout(sweep, 450) }, { passive: true })
+  // La hauteur de page change (filtres, images, accordéons) : on recalcule les déclencheurs.
+  if ('ResizeObserver' in window) {
+    let lastH = document.body.scrollHeight
+    let t = 0
+    new ResizeObserver(() => {
+      window.clearTimeout(t)
+      t = window.setTimeout(() => {
+        const h = document.body.scrollHeight
+        if (Math.abs(h - lastH) < 2) return
+        lastH = h
+        ScrollTrigger.refresh()
+        lastH = document.body.scrollHeight
+        sweep()
+      }, 250)
+    }).observe(document.body)
+  }
   ScrollTrigger.batch(els, {
     start: 'top 92%',
     once: true,

@@ -36,9 +36,18 @@ ${ctaBand()}
   }))
   $('.dlg-close', dlg)!.addEventListener('click', () => dlg.close())
   dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close() })
+  // Grille à deux colonnes (tablette) : un dernier article seul prend toute la largeur.
+  const markTail = () => {
+    const all = $$('.post')
+    all.forEach((p) => p.classList.remove('is-tail'))
+    const vis = all.filter((p) => !p.hidden && !p.classList.contains('post--lead'))
+    if (vis.length % 2 === 1) vis[vis.length - 1].classList.add('is-tail')
+  }
   const chips = $$('[data-cat].chip')
   chips.forEach((c) => c.addEventListener('click', () => {
     chips.forEach((x) => x.setAttribute('aria-pressed', String(x === c)))
     $$('.post').forEach((p) => { p.hidden = c.dataset.cat !== 'tous' && p.dataset.cat !== c.dataset.cat })
+    markTail()
   }))
+  markTail()
 })

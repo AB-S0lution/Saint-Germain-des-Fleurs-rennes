@@ -9,6 +9,8 @@ export function typo(html: string): string {
     .replace(/« /g, `«${NBSP}`)
     .replace(/ »/g, `${NBSP}»`)
     .replace(/(\d) (€|h\b|ha\b|km\b|cm\b|%)/g, `$1${NBSP}$2`)
+    // Numéros de téléphone (07 84 87 20 23) : jamais coupés en fin de ligne.
+    .replace(/\b0\d(?: \d\d){4}\b/g, (t) => t.replace(/ /g, NBSP))
 }
 
 export function setHTML(el: Element, html: string): void {

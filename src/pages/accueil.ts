@@ -201,8 +201,10 @@ ${ctaBand()}`
       const items = $$('.tstop-l')
       gsap.set(stops, { scale: 0, transformOrigin: 'center' })
       gsap.set(items, { opacity: 0.25, x: -8 })
+      const lit: boolean[] = stops.map(() => false)
       gsap.to(road, { strokeDashoffset: 0, ease: 'none', scrollTrigger: { trigger: '.teaser-draw', start: 'top 70%', end: 'bottom 60%', scrub: 0.6, onUpdate: (self) => {
-        stops.forEach((s, i) => { const on = self.progress >= Number(s.dataset.t) - 0.02; gsap.to(s, { scale: on ? 1 : 0, duration: 0.5, ease: 'back.out(2)', overwrite: true }); gsap.to(items[i], { opacity: on ? 1 : 0.25, x: on ? 0 : -8, duration: 0.5, overwrite: true }) })
+        // On ne relance les tweens que lorsqu'une étape change d'état (pas à chaque image de défilement).
+        stops.forEach((s, i) => { const on = self.progress >= Number(s.dataset.t) - 0.02; if (lit[i] === on) return; lit[i] = on; gsap.to(s, { scale: on ? 1 : 0, duration: 0.5, ease: 'back.out(2)', overwrite: true }); gsap.to(items[i], { opacity: on ? 1 : 0.25, x: on ? 0 : -8, duration: 0.5, overwrite: true }) })
       } } })
     } else {
       road.style.strokeDasharray = '1'

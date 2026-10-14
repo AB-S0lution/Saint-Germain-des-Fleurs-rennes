@@ -57,7 +57,9 @@ ${ctaBand('Rien ne vous parle ? Composez votre propre bouquet.')}
     // Les cartes filtrées s'animent ici : on retire data-reveal pour que la règle CSS
     // `.js-motion [data-reveal]` (opacité 0) ne les masque pas de nouveau après le clearProps.
     $$('[data-reveal]', grid).forEach((e) => e.removeAttribute('data-reveal'))
-    if (!reduced) gsap.fromTo(grid.children, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.04, ease: 'power3.out', clearProps: 'opacity,transform' })
+    // Seules les cartes à l'écran s'animent : animer les seize dessins d'un coup sature les téléphones.
+    const onScreen = Array.from(grid.children).filter((c) => c.getBoundingClientRect().top < window.innerHeight)
+    if (!reduced && onScreen.length) gsap.fromTo(onScreen, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.7, stagger: 0.04, ease: 'power3.out', clearProps: 'opacity,transform' })
   }
   $<HTMLInputElement>('#q')!.addEventListener('input', (e) => { st.q = (e.target as HTMLInputElement).value.trim().toLowerCase(); apply() })
   $<HTMLSelectElement>('#occ')!.addEventListener('change', (e) => { st.occ = (e.target as HTMLSelectElement).value; apply() })

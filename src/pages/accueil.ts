@@ -10,7 +10,7 @@ import { capitalise } from '../core/dom'
 import { photoBySlug, photoImg } from '../data/photos'
 import { photoBand } from '../core/ui'
 import { routeStops } from '../data/routeStops'
-import { flowerHead, stemIcon } from '../core/art'
+import { flowerHead, stemIcon, svgImg } from '../core/art'
 import { flowerOfMonth, moisNom, inSeason } from '../core/season'
 import { href, $, $$ } from '../core/dom'
 import { gsap, ScrollTrigger, SplitText } from '../core/motion'
@@ -82,7 +82,7 @@ bootPage('accueil', ({ month }) => {
 <section class="section month">
   <div class="wrap">
     <div class="section-head"><h2 class="h2" data-split>En ${moisNom(month)}, au champ.</h2><p class="lede" data-reveal>La boutique ne vend que ce qui pousse. Voici les fleurs du mois dans le catalogue d’exemple.</p></div>
-    <ul class="month-strip">${fleursMois.slice(0, 8).map((f, i) => `<li data-reveal><div>${stemIcon(f, i + 9)}</div><span>${f.nom}</span></li>`).join('')}</ul>
+    <ul class="month-strip">${fleursMois.slice(0, 8).map((f, i) => `<li data-reveal><div>${svgImg(stemIcon(f, i + 9), 'stem-icon')}</div><span>${f.nom}</span></li>`).join('')}</ul>
     <p data-reveal><a class="link" href="${href('saisons.html')}">Voir toute l’année</a></p>
   </div>
 </section>
@@ -94,7 +94,7 @@ bootPage('accueil', ({ month }) => {
       <p class="lede" data-reveal>Un banc de tiges qui ne montre que les fleurs du mois. Vous les posez dans le papier kraft, et le message de commande est prêt à partir par mail ou par téléphone.</p>
       <p data-reveal><a class="btn magnetic" href="${href('composer.html')}">Essayer le composeur</a></p>
     </div>
-    <ul class="ct-stems" aria-hidden="true">${composerStems.filter((s) => stemFlower(s).mois.includes(month)).slice(0, 6).map((s, i) => `<li style="--r:${(i - 2.5) * 5}deg">${stemIcon(stemFlower(s), i + 40)}</li>`).join('')}</ul>
+    <ul class="ct-stems" aria-hidden="true">${composerStems.filter((s) => stemFlower(s).mois.includes(month)).slice(0, 6).map((s, i) => `<li style="--r:${(i - 2.5) * 5}deg">${svgImg(stemIcon(stemFlower(s), i + 40), 'stem-icon')}</li>`).join('')}</ul>
   </div>
 </section>
 

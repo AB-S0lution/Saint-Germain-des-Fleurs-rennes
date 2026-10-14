@@ -201,9 +201,11 @@ html.is-entering .wipe { visibility: visible; clip-path: inset(0% 0% 0% 0%); }
 @media (hover: hover) and (pointer: fine) { .card:hover { transform: translateY(-4px); } }
 .card-hit { position: absolute; inset: 0; z-index: 2; background: transparent; border: 0; border-radius: inherit; }
 .card-art { aspect-ratio: 5 / 5.2; background: linear-gradient(180deg, color-mix(in srgb, var(--saison) 14%, var(--bg-2)), var(--bg-2)); display: grid; place-items: end center; padding: 1rem 1rem 0.2rem; overflow: hidden; }
-.card-art svg { width: 100%; height: 100%; transition: transform 0.7s var(--ease-grow); }
+.card-art svg, .card-art .svg-img { width: 100%; height: 100%; min-height: 0; transition: transform 0.7s var(--ease-grow); }
+.card-art .svg-img { display: block; object-fit: contain; object-position: 50% 100%; user-select: none; -webkit-user-select: none; }
+.card-art.is-round .svg-img { object-position: 50% 50%; }
 @media (max-width: 47.99rem) { .card-art { aspect-ratio: 5 / 4; } }
-@media (hover: hover) and (pointer: fine) { .card:hover .card-art svg { transform: scale(1.04) rotate(-0.8deg); } }
+@media (hover: hover) and (pointer: fine) { .card:hover .card-art svg, .card:hover .card-art .svg-img { transform: scale(1.04) rotate(-0.8deg); } }
 .card-art.is-round { place-items: center; padding: 1rem; }
 .card-body { padding: 1rem 1.15rem 1.2rem; display: flex; flex-direction: column; gap: 0.35rem; flex: 1; }
 .card-title { font-size: 1.3rem; }
@@ -314,7 +316,7 @@ dialog[open] { animation: dlg 0.5s var(--ease-grow); }
 .month-strip { list-style: none; margin: 0 0 1.5rem; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(6.5rem, 1fr)); gap: 0.4rem 1rem; }
 .month-strip li { text-align: center; font-size: 0.95rem; }
 .month-strip li div { height: 8.5rem; display: grid; place-items: end center; }
-.month-strip svg { height: 8.5rem; width: auto; max-width: 100%; }
+.month-strip svg, .month-strip .svg-img { height: 8.5rem; width: auto; max-width: 100%; }
 .stem-icon { overflow: visible; }
 
 .quote { margin: 0; background: var(--paper); border: 1px solid var(--line); border-radius: var(--r-card); padding: 1.6rem 1.7rem; }
@@ -552,7 +554,7 @@ html.menu-open:not(.lenis) body { overflow: hidden; }
 @media (min-width: 56rem) { .ct-in { grid-template-columns: 1fr 1fr; gap: 4rem; } }
 .ct-stems { list-style: none; margin: 0; padding: 1.5rem 1rem 0; display: flex; justify-content: center; align-items: flex-end; gap: 0; background: var(--kraft); border-radius: var(--r-card); min-height: 15rem; overflow: hidden; }
 .ct-stems li { height: 12rem; width: 4.2rem; flex: none; transform: rotate(var(--r)); transform-origin: 50% 100%; margin-inline: -0.4rem; }
-.ct-stems svg { height: 100%; width: auto; }
+.ct-stems svg, .ct-stems .svg-img { height: 100%; width: auto; }
 .jt .post { padding: 1.4rem; }
 
 /* Téléphone : cibles tactiles ≥ 44 px, notes lisibles. */

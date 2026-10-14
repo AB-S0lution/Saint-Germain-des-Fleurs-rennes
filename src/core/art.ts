@@ -24,6 +24,13 @@ export function shade(hex: string, amt: number): string {
 
 const f1 = (n: number): string => n.toFixed(1)
 
+/** Sert un dessin SVG statique comme <img> (data URI) : il est rastérisé une fois au lieu d'être
+ *  repeint avec ses centaines de pétales à chaque image de défilement (téléphones surtout). */
+export function svgImg(svg: string, cls = '', alt = ''): string {
+  const src = svg.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" ')
+  return `<img class="svg-img ${cls}" src="data:image/svg+xml,${encodeURIComponent(src)}" alt="${alt}" decoding="async" draggable="false">`
+}
+
 function petals(n: number, r: number, w: number, fill: string, rot = 0, cy = 0): string {
   let s = ''
   for (let i = 0; i < n; i++) {

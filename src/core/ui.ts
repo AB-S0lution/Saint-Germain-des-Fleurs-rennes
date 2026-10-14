@@ -1,5 +1,5 @@
 // Fragments HTML réutilisés par plusieurs pages.
-import { bouquetSVG, wreathSVG } from './art'
+import { bouquetSVG, wreathSVG, svgImg } from './art'
 import { esc, euro, href } from './dom'
 import { SITE } from '../data/site'
 import { MOIS_COURTS } from '../data/months'
@@ -41,7 +41,7 @@ export function bouquetArt(b: Bouquet): string {
 export function bouquetCard(b: Bouquet, enSaison = true, mois = ''): string {
   return `<article class="card bq-card${enSaison ? '' : ' is-off'}" data-reveal>
   <button class="card-hit" type="button" data-bouquet="${b.id}" aria-label="Voir le détail : ${esc(b.nom)}"></button>
-  <div class="card-art">${bouquetArt(b)}</div>
+  <div class="card-art">${svgImg(bouquetArt(b), 'bq-svg')}</div>
   <div class="card-body">
     <h3 class="card-title">${b.nom}</h3>
     <p class="card-meta">${b.fleurs.slice(0, 3).map((f) => flowerById(f).nom.toLowerCase()).join(', ')}</p>
@@ -51,7 +51,7 @@ export function bouquetCard(b: Bouquet, enSaison = true, mois = ''): string {
 }
 
 export function driedCard(d: Dried, i: number): string {
-  const art = d.type === 'couronne' ? wreathSVG(d.fleurs, i + 2, d.teinte) : bouquetSVG({ seed: i + 40, tiges: d.fleurs.map((f) => [f, 3] as [string, number]), wrap: '#B89B7A' })
+  const art = svgImg(d.type === 'couronne' ? wreathSVG(d.fleurs, i + 2, d.teinte) : bouquetSVG({ seed: i + 40, tiges: d.fleurs.map((f) => [f, 3] as [string, number]), wrap: '#B89B7A' }), d.type === 'couronne' ? 'wreath-svg' : 'bq-svg')
   return `<article class="card" data-reveal>
   <div class="card-art ${d.type === 'couronne' ? 'is-round' : ''}">${art}</div>
   <div class="card-body">
